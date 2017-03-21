@@ -12,6 +12,26 @@ const GRAPHQL_PORT = 8000;
 
 let graphQLServer;
 let appServer;
+let modulesDirectories = ['node_modules','js/assets'];
+let loaders = {
+    /*'jsx': {
+      loader: babelLoaderStringFinal,
+      include: [jsRoot]
+    },
+    'js': {
+        loader: babelLoaderStringFinal,
+        include: [jsRoot]
+    },*/
+    //'json': 'json-loader',
+    //'json5': 'json5-loader',
+    //'txt': 'raw-loader',
+    'png|jpg|jpeg|gif|svg': 'url-loader?limit=10000',
+    //'woff|woff2': 'url-loader?limit=100000',
+    //'ttf|eot': 'file-loader',
+    //'wav|mp3': 'file-loader',
+    // 'html': 'html-loader',
+    //'md|markdown': ['html-loader', 'markdown-loader']
+  };
 
 function startAppServer(callback) {
     // Serve the Relay app
@@ -20,12 +40,26 @@ function startAppServer(callback) {
         module: {
             loaders: [
                 {
+                    test: /\.(ttf|eot|woff|woff2|svg)$/,
+                    loader: "url-loader?limit=10000"
+                },
+                {
                     exclude: /node_modules/,
                     loader: 'babel',
                     test: /\.js$/
                 }
             ]
         },
+        query: {
+          cacheDirectory: true,
+          presets: ['react', 'es2015', 'stage-0'],
+          plugins: [
+            'transform-decorators-legacy',
+          ]
+      },
+      resolve: { // где искать модули
+         modulesDirectories: modulesDirectories,
+     },
         output: {
             filename: '/app.js',
             path: '/',
